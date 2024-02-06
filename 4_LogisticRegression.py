@@ -3,11 +3,14 @@ import math
 
 # logistic for binary class
 class LogisticRegression:
-    def adjust_weight(self,X,y,theta,bias,learning_rate):
-        y_prob=self.probability(X,theta,bias)
+    def __init__(self):
+        self.check_weight=False
+
+    def adjust_weight(self,X,y,learning_rate):
+        y_prob=self.probability(X)
         d_theta=np.matmul(y-y_prob,X)
         d_bias=np.sum(y-y_prob)
-        return theta+(learning_rate*d_theta),bias+(learning_rate*d_bias)
+        return self.theta+(learning_rate*d_theta),self.bias+(learning_rate*d_bias)
 
     def log_likelihood_error(self,y,y_pred):
         epsilon = 1e-15
@@ -17,20 +20,23 @@ class LogisticRegression:
     def sigmoid(self,x):
         return 1 / (1 + np.exp(-np.array(x,dtype=float)))
 
-    def probability(self,X,theta,bias):
-        return self.sigmoid(np.matmul(X,theta)+bias)
+    def probability(self,X):
+        return self.sigmoid(np.matmul(X,self.theta)+self.bias)
     
-    def predict(self,X,theta,bias,threshold):
-        prob=self.probability(X,theta,bias)
+    def predict(self,X,threshold):
+        prob=self.probability(X)
         return np.array(prob>=threshold,dtype=int)
         
     def train(self, X, y, epoch, learning_rate, batch_size):
         # Convert to NumPy arrays if not already
         X=np.array(X)
         y=np.array(y)
-        # random first theta and bias
-        theta=np.random.rand(X.shape[1])
-        bias=np.random.rand(1)
+
+        if not self.check_weight:
+            # random first theta and bias
+            self.theta=np.random.rand(X.shape[1])
+            self.bias=np.random.rand(1)
+            self.check_weight=True
         # set batch
         num_batch=X.shape[0]//batch_size
         X_batch=np.reshape(X,(num_batch,batch_size,X.shape[1]))
@@ -41,24 +47,30 @@ class LogisticRegression:
         for i in range(epoch):
             for j in range(num_batch):
                 # adjust theta
-                theta,bias=self.adjust_weight(X_batch[j],y_batch[j],theta,bias,learning_rate)
+                self.theta,self.bias=self.adjust_weight(X_batch[j],y_batch[j],learning_rate)
             # calaulate loss
-            y_pred=self.probability(X,theta,bias) 
+            y_pred=self.probability(X) 
             mle=self.log_likelihood_error(y,y_pred)
             if mle < best_mle:
                 best_mle=mle
-                best_theta=theta
-                best_bias=bias
+                best_theta=self.theta
+                best_bias=self.bias
             print("epoch",i)
             print("loss",mle)
             print("---------------")
 
         return best_theta,best_bias,best_mle
     
+    def set_weight(self,theta,bias):
+        self.theta=np.array(theta)
+        self.bias=np.array(bias)
+        self.check_weight=True
+        
+    
 X=np.array([[1,1],[0,0],[3,3],[2,1],[4,3],[4,4]])
 y=np.array([1,1,0,1,0,0])
 L2=LogisticRegression()
 theta,bias,_=L2.train(X,y,1000,0.01,6)
 print(theta,bias)
-print(L2.probability(X,theta,bias))
-print(L2.predict(X,theta,bias,0.5))
+print(L2.probability(X))
+print(L2.predict(X,0.5))
