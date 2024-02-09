@@ -64,7 +64,7 @@ class SimpleBayesClassifier:
                     pos_bin_index = np.digitize(feature, pos_edges) - 1
                     neg_bin_index = np.digitize(feature, neg_edges) - 1
                     
-                    # Handling out-of-range indices
+                    # Handling out-of-range minimum and maximum values
                     pos_bin_index = max(min(pos_bin_index, len(pos_hist) - 1), 0)
                     neg_bin_index = max(min(neg_bin_index, len(neg_hist) - 1), 0)
                     
@@ -72,6 +72,7 @@ class SimpleBayesClassifier:
                     prob_pos = pos_hist[pos_bin_index] / (np.sum(pos_hist) + epsilon)
                     prob_neg = neg_hist[neg_bin_index] / (np.sum(neg_hist) + epsilon)
 
+                    # Setting epsilon to minimun probbabilities 
                     prob_pos = prob_pos if prob_pos > 0 else epsilon
                     prob_neg = prob_neg if prob_neg > 0 else epsilon
 
