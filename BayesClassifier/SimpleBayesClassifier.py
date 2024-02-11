@@ -32,11 +32,11 @@ class SimpleBayesClassifier:
             # Compute histograms for 'Yes' and 'No' samples
             x_unique=np.unique(x_features_no_nan)
             if len(x_unique) < n_bins:
-                x_hist, x_edges = np.histogram(x_features_no_nan, bins=len(x_unique))
+                _, x_edges = np.histogram(x_features_no_nan, bins=len(x_unique))
                 pos_hist, pos_edges = np.histogram(pos_features_no_nan, bins=x_edges)
                 neg_hist, neg_edges = np.histogram(neg_features_no_nan, bins=x_edges)
             else:
-                x_hist, x_edges = np.histogram(x_features_no_nan, bins=n_bins)
+                _, x_edges = np.histogram(x_features_no_nan, bins=n_bins)
                 pos_hist, pos_edges = np.histogram(pos_features_no_nan, bins=x_edges)
                 neg_hist, neg_edges = np.histogram(neg_features_no_nan, bins=x_edges)
             
@@ -69,12 +69,12 @@ class SimpleBayesClassifier:
                     neg_bin_index = max(min(neg_bin_index, len(neg_hist) - 1), 0)
                     
                     epsilon = 1e-15
-                    prob_pos = pos_hist[pos_bin_index] / (np.sum(pos_hist) + epsilon)
-                    prob_neg = neg_hist[neg_bin_index] / (np.sum(neg_hist) + epsilon)
+                    prob_pos = pos_hist[pos_bin_index] / max(np.sum(pos_hist), epsilon)
+                    prob_neg = neg_hist[neg_bin_index] / max(np.sum(neg_hist), epsilon)
 
                     # Setting epsilon to minimun probbabilities 
-                    prob_pos = prob_pos if prob_pos > 0 else epsilon
-                    prob_neg = prob_neg if prob_neg > 0 else epsilon
+                    prob_pos = max(prob_pos, epsilon)
+                    prob_neg = max(prob_neg, epsilon)
 
                     log_prob_pos += np.log(prob_pos)
                     log_prob_neg += np.log(prob_neg)
@@ -84,9 +84,12 @@ class SimpleBayesClassifier:
             log_prob_neg += np.log(self.prior_neg)
             
             # Assigning class label based on the maximum log probability
-            pred = 1 if np.exp(log_prob_pos) > thresh and log_prob_pos > log_prob_neg else 0
+            pred = 1 if log_prob_pos-log_prob_neg > thresh else 0
             y_pred.append(pred)
 
         return y_pred
 
-
+# model=SimpleBayesClassifier()
+# model.fit_params(x_train, y_train)
+# pred=np.array(model.predict(x_test))
+# print(pred)
