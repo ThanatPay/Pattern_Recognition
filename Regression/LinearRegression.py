@@ -57,9 +57,9 @@ class LinearRegression:
         self.bias=np.array(bias)
         self.check_weight=True
     
-X=np.array([[1,1],[2,1],[3,2],[4,2]])
-y=np.array([1,2,3,4])
-L1=LinearRegression()
-theta,bias,_=L1.train(X,y,10,0.1,2)
-print(theta,bias)
-print(L1.predict(X))
+# X=np.array([[1,1],[2,1],[3,2],[4,2]])
+# y=np.array([1,2,3,4])
+# L1=LinearRegression()
+# theta,bias,_=L1.train(X,y,10,0.1,2)
+# print(theta,bias)
+# print(L1.predict(X))

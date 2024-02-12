@@ -42,24 +42,24 @@ class LogisticRegression:
         X_batch=np.reshape(X,(num_batch,batch_size,X.shape[1]))
         y_batch=np.reshape(y,(num_batch,batch_size))
         # for select best loss
-        best_mle=math.inf
+        self.best_mle=math.inf
         
         for i in range(epoch):
+            print("epoch",i)
             for j in range(num_batch):
                 # adjust theta
                 self.theta,self.bias=self.adjust_weight(X_batch[j],y_batch[j],learning_rate)
             # calaulate loss
             y_pred=self.probability(X) 
             mle=self.log_likelihood_error(y,y_pred)
-            if mle < best_mle:
-                best_mle=mle
-                best_theta=self.theta
-                best_bias=self.bias
-            print("epoch",i)
+            if mle < self.best_mle:
+                self.best_mle=mle
+                self.best_theta=self.theta
+                self.best_bias=self.bias
             print("loss",mle)
             print("---------------")
 
-        return best_theta,best_bias,best_mle
+        return self.best_theta,self.best_bias,self.best_mle
     
     def set_weight(self,theta,bias):
         self.theta=np.array(theta)
@@ -67,10 +67,10 @@ class LogisticRegression:
         self.check_weight=True
         
     
-X=np.array([[1,1],[0,0],[3,3],[2,1],[4,3],[4,4]])
-y=np.array([1,1,0,1,0,0])
-L2=LogisticRegression()
-theta,bias,_=L2.train(X,y,1000,0.01,6)
-print(theta,bias)
-print(L2.probability(X))
-print(L2.predict(X,0.5))
+# X=np.array([[1,1],[0,0],[3,3],[2,1],[4,3],[4,4]])
+# y=np.array([1,1,0,1,0,0])
+# L2=LogisticRegression()
+# theta,bias,_=L2.train(X,y,1000,0.01,6)
+# print(theta,bias)
+# print(L2.probability(X))
+# print(L2.predict(X,0.5))
