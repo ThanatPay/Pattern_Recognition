@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 def Euclidean_distance(o1,o2):
     Ed = np.sqrt(np.sum((o1-o2)**2))
@@ -11,7 +12,7 @@ def Cosine_similarity(o1,o2):
     sso2 = np.sqrt(np.sum(o2**2))
     return dot/(sso1 + sso2)
 
-class hello_clustering:
+class K_Means:
     def __init__(self,data, k, distance, tolerance):
         self.n=len(data)
         self.dim=len(data[0])
@@ -90,7 +91,7 @@ class Elbow_method:
     def forword(self):
         fraction_variance=np.zeros(self.N)
         for i in range(self.N):
-            clustering=hello_clustering(self.data,i+1,self.distance,1e-5)  
+            clustering=K_Means(self.data,i+1,self.distance,1e-5)  
             cluster,centroid=clustering.forward()
             bcv=self.between_cluster_variance(centroid,cluster)
             adv=self.all_data_variance(self.data)
@@ -100,8 +101,14 @@ class Elbow_method:
             fraction_variance[i]=bcv/adv
         return fraction_variance
 
-data=np.array([[1,2],[3,3],[2,2],[8,8],[6,6],[7,7],[-3,-3],[-2,-4],[-7,-7]])
-elbow=Elbow_method(data,5,Euclidean_distance)
-print(elbow.forword())
+# data=np.array([[1,2],[3,3],[2,2],[8,8],[6,6],[7,7],[-3,-3],[-2,-4],[-7,-7]])
+# elbow=Elbow_method(data,5,Euclidean_distance)
+# plt.plot(range(1,len(elbow.forword())+1), elbow.forword())
+# plt.show()
+
+# clustering=K_Means(data,3,Euclidean_distance,1e-5)  
+# cluster,centroid=clustering.forward()
+# plt.scatter(data[:,0], data[:,1], c=cluster)
+# plt.show()
 
         
